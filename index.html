@@ -199,7 +199,7 @@ html.ready .hero>video{transform:none}
 
 <div class="modal" id="plan" role="dialog" aria-modal="true" aria-labelledby="plan-t"><div class="panel glass">
  <div class="ph"><div><small>Estancias del Sur</small><h2 id="plan-t">Planimetría</h2></div><button class="x" data-close aria-label="Cerrar">×</button></div>
- <div class="ptabs"><button class="tab on" data-plan="baja">Planta Baja</button><button class="tab" data-plan="alta">Planta Alta</button></div>
+ <div class="ptabs"><button class="tab on" data-plan="baja">Planta Baja</button><button class="tab" data-plan="alta">Planimetría</button></div>
  <div class="pframe" id="pframe"></div>
  <div class="pdl"><span class="pcap" id="pcap"></span><a class="pill" id="pdlbtn" aria-disabled="true" download>Descargar PDF</a></div>
 </div></div>
@@ -331,9 +331,9 @@ function zInit(f){
 addEventListener('resize',zApply);
 function setPlan(k){
  $$('.tab').forEach(b=>b.classList.toggle('on',b.dataset.plan===k));
- const src=PLANS[k],frame=$('#pframe'),dl=$('#pdlbtn'),label=k==='baja'?'Planta Baja':'Planta Alta',img=IMGS[k];
+ const src=PLANS[k],frame=$('#pframe'),dl=$('#pdlbtn'),label=k==='baja'?'Planta Baja':'Planimetría',img=IMGS[k];
  $('#pcap').textContent='';
- if(img){frame.innerHTML=`<img id="pimg" src="${img}" alt="Planimetría ${label}" draggable="false"><div class="zctl"><button id="zin" aria-label="Acercar">+</button><button id="zout" aria-label="Alejar">−</button><button id="zrst" aria-label="Restablecer" style="font-size:.8rem">⤢</button></div><div class="zhint">Scroll o pellizcá para hacer zoom · arrastrá para moverte</div>`;zInit(frame);zReset()}
+ if(img){frame.innerHTML=`<img id="pimg" src="${img}" alt="${k==='baja'?'Planimetría '+label:label}" draggable="false"><div class="zctl"><button id="zin" aria-label="Acercar">+</button><button id="zout" aria-label="Alejar">−</button><button id="zrst" aria-label="Restablecer" style="font-size:.8rem">⤢</button></div><div class="zhint">Scroll o pellizcá para hacer zoom · arrastrá para moverte</div>`;zInit(frame);zReset()}
  else frame.innerHTML=`<p class="pempty">Todavía no se subió el PDF de ${label}. Cuando lo mandes, va a aparecer acá.</p>`;
  if(src){dl.removeAttribute('aria-disabled');dl.href=src;dl.download=k==='baja'?'Planimetria_planta_baja.pdf':'Planimetria_techos.pdf'}
  else{dl.setAttribute('aria-disabled','true');dl.removeAttribute('href')}
