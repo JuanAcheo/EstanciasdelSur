@@ -241,9 +241,9 @@ html.ready .hero>video{transform:none}
 const HERO='assets/e4a1d1ee7792.webp';
 const IMG={ext0:['assets/22a4c7a41486.webp'],ext1:['assets/bed2bf00f21e.webp'],ext2:['assets/e33506bea2f5.webp'],int0:['assets/567365005ab5.webp'],int1:['assets/75e759f8545b.webp'],int2:['assets/ea58e86a6518.webp'],int3:['assets/b666bfeafcf6.webp'],int4:['assets/96f6a264483c.webp']};
 Object.assign(IMG,{"e2_0":"assets/5eb05a485062.webp","e2_1":"assets/a41950dd031f.webp","e2_2":"assets/be62af8318e6.webp","e2_3":"assets/c57f47ef2496.webp"});
-const PLANS={pl1:'assets/planta_1.pdf',pl2:'assets/planta_2.pdf',baja:'assets/d32f8fd8db66.pdf',alta:'assets/c92333d64c6d.pdf'};
+const PLANS={pl3:'assets/planta_3.pdf',pl1:'assets/planta_1.pdf',pl2:'assets/planta_2.pdf',baja:'assets/d32f8fd8db66.pdf',alta:'assets/c92333d64c6d.pdf'};
 /* visor: lo que se muestra en pantalla (PLANS = lo que se descarga) */
-const IMGS={pl1:'assets/planta_1.webp',pl2:'assets/planta_2.webp',baja:'assets/c3f83383d5d9.webp',alta:'assets/eed8a3ae7f87.webp'};
+const IMGS={pl3:'assets/planta_3.webp',pl1:'assets/planta_1.webp',pl2:'assets/planta_2.webp',baja:'assets/c3f83383d5d9.webp',alta:'assets/eed8a3ae7f87.webp'};
 const VIEWS={};
 const REF=[["assets/ead019f8581d.jpg",1400,1051],["assets/720c04f7251a.jpg",564,546],["assets/4d1616f1d1af.jpg",1080,1080],["assets/41a6be72ff25.jpg",768,1024],["assets/9e461c80ac8b.jpg",800,1066],["assets/66d40efc14c7.jpg",1148,1400],["assets/291afcb016a9.jpg",736,1313],["assets/b69b73f9d828.jpg",640,960],["assets/dec5f2a06466.jpg",896,1344],["assets/bee74e16aab3.jpg",736,981],["assets/fa081cf1986d.jpg",736,982],["assets/54aeb73a6a64.jpg",1200,800],["assets/39e5410b62de.jpg",933,1400],["assets/f2c19552592c.jpg",1199,848],["assets/db88ec7d38b6.jpg",720,960],["assets/cc9db190561e.jpg",736,981],["assets/2a1124d0366a.jpg",735,704]];
 const MINI='';
@@ -347,8 +347,8 @@ addEventListener('touchend',e=>{if(ty===null||$('.modal.open'))return;const d=ty
 $$('.modal').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)closeM()}));
 let last=null;
 let PMODE=null;
-const PM={plan:{t:'Planimetría',tabs:[['baja','Planta Baja'],['alta','Planimetría']],land:false},plantas:{t:'Plantas',tabs:[['pl1','Planta 1'],['pl2','Planta 2']],land:true}};
-const PLBL={baja:'Planta Baja',alta:'Planimetría',pl1:'Planta 1',pl2:'Planta 2'},PDLN={baja:'Planimetria_planta_baja.pdf',alta:'Planimetria_techos.pdf',pl1:'Estancias_del_Sur_Planta_1.pdf',pl2:'Estancias_del_Sur_Planta_2.pdf'};
+const PM={plan:{t:'Planimetría',tabs:[['baja','Planta Baja'],['alta','Planimetría']],land:false},plantas:{t:'Plantas',tabs:[['pl1','Planta 1'],['pl2','Planta 2'],['pl3','Planta 3']],land:true}};
+const PLBL={baja:'Planta Baja',alta:'Planimetría',pl1:'Planta 1',pl2:'Planta 2',pl3:'Planta 3'},PDLN={baja:'Planimetria_planta_baja.pdf',alta:'Planimetria_techos.pdf',pl1:'Estancias_del_Sur_Planta_1.pdf',pl2:'Estancias_del_Sur_Planta_2.pdf',pl3:'Estancias_del_Sur_Planta_3.pdf'};
 function setMode(m){PMODE=m;const c=PM[m];$('#plan-t').textContent=c.t;$('.ptabs').innerHTML=c.tabs.map(([k,l],i)=>`<button class="tab${i?'':' on'}" data-plan="${k}">${l}</button>`).join('');$('#pframe').classList.toggle('land',c.land);setPlan(c.tabs[0][0])}
 function openM(id,from){closeM(true);if(id==='plan'||id==='plantas'){if(PMODE!==id||!$('#pimg'))setMode(id);id='plan'}const m=$('#'+id);m.classList.add('open');last=from;setTimeout(()=>$('.x',m).focus(),50)}
 function closeM(q){$$('.modal.open').forEach(m=>m.classList.remove('open'));if(!q&&last)last.focus()}
