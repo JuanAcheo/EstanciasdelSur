@@ -134,6 +134,7 @@ html.ready .hero>video{transform:none}
 .tab.on{background:#efeae4;color:#111;border-color:#efeae4}
 .pframe{position:relative;width:min(100%,calc((100vh - 13rem)*.7068));margin:0 auto;aspect-ratio:2573/3640;background:#fff;touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none;border-radius:1rem;border:1px solid var(--line);background:rgba(255,255,255,.04);display:flex;align-items:center;justify-content:center;overflow:hidden}
 .pframe embed,.pframe iframe{width:100%;height:100%;border:0}
+.pframe.land{aspect-ratio:3308/2339;width:min(100%,calc((100vh - 16.5rem)*1.4143))}
 .pframe.sch{aspect-ratio:auto;background:transparent;border:0;border-radius:0;padding:1rem 0 .5rem}
 .pframe.sch img{width:100%;height:auto;max-height:62vh;object-fit:contain;display:block}
 .pcap{font-size:.75rem;color:var(--mut)}
@@ -146,6 +147,7 @@ html.ready .hero>video{transform:none}
  .ticks{right:.5rem}.ticks span{width:9px}.ticks .on span{width:18px}
  h1{font-size:clamp(2rem,11vw,3.6rem)}
  .pframe{aspect-ratio:2573/3640}
+ .pframe.land{aspect-ratio:3308/2339}
  .mini{width:48vw;align-self:flex-end}
 }
 @media (prefers-reduced-motion:reduce){*{transition-duration:.01ms!important;animation-duration:.01ms!important;animation-delay:0s!important}}
@@ -219,6 +221,7 @@ html.ready .hero>video{transform:none}
    <div class="menu" id="relmenu" role="menu"></div>
   </div>
   <button data-open="plan">Planimetría</button>
+  <button data-open="plantas">Plantas</button>
  </nav>
  <span style="width:1px"></span>
 </header>
@@ -238,9 +241,9 @@ html.ready .hero>video{transform:none}
 const HERO='assets/e4a1d1ee7792.webp';
 const IMG={ext0:['assets/22a4c7a41486.webp'],ext1:['assets/bed2bf00f21e.webp'],ext2:['assets/e33506bea2f5.webp'],int0:['assets/567365005ab5.webp'],int1:['assets/75e759f8545b.webp'],int2:['assets/ea58e86a6518.webp'],int3:['assets/b666bfeafcf6.webp'],int4:['assets/96f6a264483c.webp']};
 Object.assign(IMG,{"e2_0":"assets/5eb05a485062.webp","e2_1":"assets/a41950dd031f.webp","e2_2":"assets/be62af8318e6.webp","e2_3":"assets/c57f47ef2496.webp"});
-const PLANS={baja:'assets/d32f8fd8db66.pdf',alta:'assets/c92333d64c6d.pdf'};
+const PLANS={pl1:'assets/planta_1.pdf',pl2:'assets/planta_2.pdf',baja:'assets/d32f8fd8db66.pdf',alta:'assets/c92333d64c6d.pdf'};
 /* visor: lo que se muestra en pantalla (PLANS = lo que se descarga) */
-const IMGS={baja:'assets/c3f83383d5d9.webp',alta:'assets/eed8a3ae7f87.webp'};
+const IMGS={pl1:'assets/planta_1.webp',pl2:'assets/planta_2.webp',baja:'assets/c3f83383d5d9.webp',alta:'assets/eed8a3ae7f87.webp'};
 const VIEWS={};
 const REF=[["assets/ead019f8581d.jpg",1400,1051],["assets/720c04f7251a.jpg",564,546],["assets/4d1616f1d1af.jpg",1080,1080],["assets/41a6be72ff25.jpg",768,1024],["assets/9e461c80ac8b.jpg",800,1066],["assets/66d40efc14c7.jpg",1148,1400],["assets/291afcb016a9.jpg",736,1313],["assets/b69b73f9d828.jpg",640,960],["assets/dec5f2a06466.jpg",896,1344],["assets/bee74e16aab3.jpg",736,981],["assets/fa081cf1986d.jpg",736,982],["assets/54aeb73a6a64.jpg",1200,800],["assets/39e5410b62de.jpg",933,1400],["assets/f2c19552592c.jpg",1199,848],["assets/db88ec7d38b6.jpg",720,960],["assets/cc9db190561e.jpg",736,981],["assets/2a1124d0366a.jpg",735,704]];
 const MINI='';
@@ -343,7 +346,11 @@ addEventListener('touchstart',e=>{ty=e.touches[0].clientY},{passive:true});
 addEventListener('touchend',e=>{if(ty===null||$('.modal.open'))return;const d=ty-e.changedTouches[0].clientY;ty=null;if(Math.abs(d)>50)show(idx+(d>0?1:-1))},{passive:true});
 $$('.modal').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)closeM()}));
 let last=null;
-function openM(id,from){closeM(true);if(id==='plan'&&!$('#pimg'))setPlan('baja');const m=$('#'+id);m.classList.add('open');last=from;setTimeout(()=>$('.x',m).focus(),50)}
+let PMODE=null;
+const PM={plan:{t:'Planimetría',tabs:[['baja','Planta Baja'],['alta','Planimetría']],land:false},plantas:{t:'Plantas',tabs:[['pl1','Planta 1'],['pl2','Planta 2']],land:true}};
+const PLBL={baja:'Planta Baja',alta:'Planimetría',pl1:'Planta 1',pl2:'Planta 2'},PDLN={baja:'Planimetria_planta_baja.pdf',alta:'Planimetria_techos.pdf',pl1:'Estancias_del_Sur_Planta_1.pdf',pl2:'Estancias_del_Sur_Planta_2.pdf'};
+function setMode(m){PMODE=m;const c=PM[m];$('#plan-t').textContent=c.t;$('.ptabs').innerHTML=c.tabs.map(([k,l],i)=>`<button class="tab${i?'':' on'}" data-plan="${k}">${l}</button>`).join('');$('#pframe').classList.toggle('land',c.land);setPlan(c.tabs[0][0])}
+function openM(id,from){closeM(true);if(id==='plan'||id==='plantas'){if(PMODE!==id||!$('#pimg'))setMode(id);id='plan'}const m=$('#'+id);m.classList.add('open');last=from;setTimeout(()=>$('.x',m).focus(),50)}
 function closeM(q){$$('.modal.open').forEach(m=>m.classList.remove('open'));if(!q&&last)last.focus()}
 document.addEventListener('keydown',e=>{
   if(e.key==='Escape'){closeM();setMenu(false);return}
@@ -390,11 +397,11 @@ function zInit(f){
 addEventListener('resize',zApply);
 function setPlan(k){
  $$('.tab').forEach(b=>b.classList.toggle('on',b.dataset.plan===k));
- const src=PLANS[k],frame=$('#pframe'),dl=$('#pdlbtn'),label=k==='baja'?'Planta Baja':'Planimetría',img=IMGS[k];
+ const src=PLANS[k],frame=$('#pframe'),dl=$('#pdlbtn'),label=PLBL[k]||k,img=IMGS[k];
  $('#pcap').textContent='';
- if(img){frame.innerHTML=`<img id="pimg" src="${img}" alt="${k==='baja'?'Planimetría '+label:label}" draggable="false"><div class="zctl"><button id="zin" aria-label="Acercar">+</button><button id="zout" aria-label="Alejar">−</button><button id="zrst" aria-label="Restablecer" style="font-size:.8rem">⤢</button></div><div class="zhint">Scroll o pellizcá para hacer zoom · arrastrá para moverte</div>`;zInit(frame);zReset()}
+ if(img){frame.innerHTML=`<img id="pimg" src="${img}" alt="${label}" draggable="false"><div class="zctl"><button id="zin" aria-label="Acercar">+</button><button id="zout" aria-label="Alejar">−</button><button id="zrst" aria-label="Restablecer" style="font-size:.8rem">⤢</button></div><div class="zhint">Scroll o pellizcá para hacer zoom · arrastrá para moverte</div>`;zInit(frame);zReset()}
  else frame.innerHTML=`<p class="pempty">Todavía no se subió el PDF de ${label}. Cuando lo mandes, va a aparecer acá.</p>`;
- if(src){dl.removeAttribute('aria-disabled');dl.href=src;dl.download=k==='baja'?'Planimetria_planta_baja.pdf':'Planimetria_techos.pdf'}
+ if(src){dl.removeAttribute('aria-disabled');dl.href=src;dl.download=PDLN[k]||'plano.pdf'}
  else{dl.setAttribute('aria-disabled','true');dl.removeAttribute('href')}
 }
 
