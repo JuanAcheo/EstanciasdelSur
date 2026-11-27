@@ -229,12 +229,13 @@ html.ready .hero>video{transform:none}
 .proj>img.night{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1.4s ease}
 .proj.f0.isnight>img.night{opacity:1}
 .proj:not(.f0)>img.night{opacity:0!important;animation:none!important}
-.dn{padding:.45rem 1rem .45rem .5rem;gap:.6rem}
-.dn .tr{position:relative;width:2.5rem;height:1.4rem;border-radius:999px;background:rgba(255,255,255,.22);transition:background .4s;flex:none}
-.dn .tr::after{content:'';position:absolute;top:.17rem;left:.17rem;width:1.06rem;height:1.06rem;border-radius:50%;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.3);transition:transform .45s cubic-bezier(.3,.7,.2,1)}
+.ttl{display:flex;align-items:center;gap:clamp(1rem,2.2vw,1.8rem);flex-wrap:wrap}
+.dn{padding:.55rem 1.3rem .55rem .6rem;gap:.8rem;font-size:1.05rem;margin-top:.4em}
+.dn .tr{position:relative;width:3.3rem;height:1.85rem;border-radius:999px;background:rgba(255,255,255,.22);transition:background .4s;flex:none}
+.dn .tr::after{content:'';position:absolute;top:.17rem;left:.17rem;width:1.45rem;height:1.45rem;top:.2rem;left:.2rem;border-radius:50%;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.3);transition:transform .45s cubic-bezier(.3,.7,.2,1)}
 .dn[aria-checked=true] .tr{background:#4a5a8c}
-.dn[aria-checked=true] .tr::after{transform:translateX(1.1rem)}
-.dn .dl{min-width:2.9rem;text-align:left}
+.dn[aria-checked=true] .tr::after{transform:translateX(1.45rem)}
+.dn .dl{min-width:3.6rem;text-align:left}
 .proj:not(.f0) .dn{display:none}
 </style>
 </head>
@@ -295,9 +296,9 @@ S.push({id:'proj',cat:'Proyecto',name:'Proyecto',cls:'proj'});
 /* Espacios 02 */
 const TOT=S.length+2+REL.length,R0=S.length+2;
 
-const card=s=>`<aside class="card glass">${s&&s.cls==='proj'?`<button class="pill dn" role="switch" aria-checked="false" aria-label="Ver de noche"><span class="tr"></span><span class="dl">Día</span></button>`:''}<button class="pill" data-open="plan">Planimetría</button><button class="pill round" data-next aria-label="Siguiente">${down}</button></aside>`;
+const card=s=>s&&s.cls==='proj'?'':`<aside class="card glass"><button class="pill" data-open="plan">Planimetría</button><button class="pill round" data-next aria-label="Siguiente">${down}</button></aside>`;
 let h=`<section class="slide hero"><img alt="Estancias del Sur, vista aérea" src="${HERO}"><div class="shade"></div><div class="foot"><div class="cap"><span class="eyebrow">Proyecto</span><h1>Estancias del Sur</h1><div class="acts"><button class="pill round" data-next aria-label="Ver proyecto">${down}</button></div></div></div></section>`;
-S.forEach((s,i)=>{h+=`<section class="slide${s.cls?' '+s.cls+' f0':''}">${imgs(s.id).map((u,k,a)=>`<img${a.length>1?` class="g${k?'':' on'}"`:''} alt="${s.name}${a.length>1?' '+(k+1):''}" data-src="${u}">`).join('')}${imgs(s.id).length>1?`<button class="garr prv glass" data-gp="-1" aria-label="Imagen anterior">‹</button><button class="garr nxt glass" data-gp="1" aria-label="Imagen siguiente">›</button>`:''}<div class="shade"></div><div class="foot"><div class="cap"><span class="idx">${String(i+2).padStart(2,'0')} / ${TOT}</span><h2>${s.name}</h2>${imgs(s.id).length>1?`<div class="dots">${imgs(s.id).map((_,k)=>`<button data-gi="${k}" aria-label="Ver imagen ${k+1}"${k?'':' class="on"'}></button>`).join('')}</div>`:''}</div>${card(s)}</div></section>`});
+S.forEach((s,i)=>{h+=`<section class="slide${s.cls?' '+s.cls+' f0':''}">${imgs(s.id).map((u,k,a)=>`<img${a.length>1?` class="g${k?'':' on'}"`:''} alt="${s.name}${a.length>1?' '+(k+1):''}" data-src="${u}">`).join('')}${imgs(s.id).length>1?`<button class="garr prv glass" data-gp="-1" aria-label="Imagen anterior">‹</button><button class="garr nxt glass" data-gp="1" aria-label="Imagen siguiente">›</button>`:''}<div class="shade"></div><div class="foot"><div class="cap"><span class="idx">${String(i+2).padStart(2,'0')} / ${TOT}</span>${s.cls==='proj'?`<div class="ttl"><h2>${s.name}</h2><button class="pill dn" role="switch" aria-checked="false" aria-label="Ver de noche"><span class="tr"></span><span class="dl">Día</span></button></div>`:`<h2>${s.name}</h2>`}${imgs(s.id).length>1?`<div class="dots">${imgs(s.id).map((_,k)=>`<button data-gi="${k}" aria-label="Ver imagen ${k+1}"${k?'':' class="on"'}></button>`).join('')}</div>`:''}</div>${card(s)}</div></section>`});
 
 /* sección Referencias */
 h+=`<section class="slide refs"><div class="rscroll" id="rscroll"><div class="rgrid">${REF.map((r,i)=>`<button data-ref="${i}" aria-label="Ver referencia ${i+1}"><img src="${r[0]}" width="${r[1]}" height="${r[2]}" alt="Referencia ${i+1}" loading="lazy" decoding="async"><span>${String(i+1).padStart(2,'0')}</span></button>`).join('')}</div></div><div class="rhead"><div class="cap"><span class="idx">${String(S.length+2).padStart(2,'0')} / ${TOT}</span><h2>Referencias</h2></div></div></section>`;
