@@ -220,9 +220,9 @@ html.ready .hero>video{transform:none}
 @keyframes pShade{0%,45%{opacity:0}100%{opacity:1}}
 .hero.dvo>img{animation:pOut 2.2s cubic-bezier(.6,0,.3,1) both}
 .hero.dvo .foot,.hero.dvo .shade{opacity:0;transition:opacity .5s}
-.proj.dvi>img.on,.proj.isnight.dvi>img.night{animation:pIn 2.2s cubic-bezier(.6,0,.3,1) both}
+.proj.dvi>img.on{animation:pIn 2.2s cubic-bezier(.6,0,.3,1) both}
 .proj.dvi .cap,.proj.dvi .card{animation:rise .9s cubic-bezier(.2,.7,.2,1) 1.4s both}
-.proj.dbo>img.on,.proj.isnight.dbo>img.night{animation:pOut2 2.2s cubic-bezier(.6,0,.3,1) both}
+.proj.dbo>img.on{animation:pOut2 2.2s cubic-bezier(.6,0,.3,1) both}
 .proj.dbo .foot{opacity:0;transition:opacity .4s}
 .hero.dbi>img{animation:pIn2 2.2s cubic-bezier(.6,0,.3,1) both}
 /* día / noche */
@@ -230,13 +230,22 @@ html.ready .hero>video{transform:none}
 .proj.f0.isnight>img.night{opacity:1}
 .proj:not(.f0)>img.night{opacity:0!important;animation:none!important}
 .ttl{display:flex;align-items:center;gap:clamp(1rem,2.2vw,1.8rem);flex-wrap:wrap}
-.dn{padding:.55rem 1.3rem .55rem .6rem;gap:.8rem;font-size:1.05rem;margin-top:.4em}
+.dn{padding:.55rem 1.1rem;gap:.7rem;font-size:1.05rem;margin-top:.4em}
 .dn .tr{position:relative;width:3.3rem;height:1.85rem;border-radius:999px;background:rgba(255,255,255,.22);transition:background .4s;flex:none}
 .dn .tr::after{content:'';position:absolute;top:.17rem;left:.17rem;width:1.45rem;height:1.45rem;top:.2rem;left:.2rem;border-radius:50%;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.3);transition:transform .45s cubic-bezier(.3,.7,.2,1)}
 .dn[aria-checked=true] .tr{background:#4a5a8c}
 .dn[aria-checked=true] .tr::after{transform:translateX(1.45rem)}
 .dn .dl{min-width:3.6rem;text-align:left}
-.proj:not(.f0) .dn{display:none}
+
+.proj>img.xf{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:1;transition:opacity 1.2s ease;pointer-events:none;z-index:1}
+.sws{display:flex;gap:.7rem;flex-wrap:wrap;margin-top:.4em}
+.proj .cap{max-width:none}
+@media (min-width:761px){.proj .ttl{flex-wrap:nowrap}.sws{flex-wrap:nowrap}}
+.sws .dn{margin-top:0}
+.dn .la,.dn .lb{transition:opacity .35s}
+.dn[aria-checked=false] .lb,.dn[aria-checked=true] .la{opacity:.45}
+.dn .dl{display:none}
+@media (max-width:560px){.dn{font-size:.9rem;padding:.45rem .9rem;gap:.55rem}.dn .tr{width:2.7rem;height:1.55rem}.dn .tr::after{width:1.15rem!important;height:1.15rem!important}.dn[aria-checked=true] .tr::after{transform:translateX(1.15rem)}}
 </style>
 </head>
 <body>
@@ -290,21 +299,24 @@ const down='<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="
 /* flatten spaces into slides */
 const imgs=id=>[].concat(IMG[id]||[]);
 const S=[];
-IMG.proj=['assets/proyecto_002.webp','assets/proyecto_003.webp'];const NIGHT='assets/proyecto_002_noche.webp';
+/* Proyecto: cada vista en 4 versiones (día/noche × claro/oscuro) */
+const PV=[{d:'assets/r002.webp',g:'assets/r002_gris.webp',n:'assets/r002_noche.webp',ng:'assets/r002_noche_gris.webp'},{d:'assets/r003.webp',g:'assets/r003_gris.webp',n:'assets/r003_noche.webp',ng:'assets/r003_noche_gris.webp'}];
+const PST={night:false,dark:false};
+IMG.proj=PV.map(v=>v.d);
 S.push({id:'proj',cat:'Proyecto',name:'Proyecto',cls:'proj'});
 /* Espacios 02 */
 const TOT=S.length+2+REL.length,R0=S.length+2;
 
 const card=s=>s&&s.cls==='proj'?'':`<aside class="card glass"><button class="pill" data-open="plan">Planimetría</button><button class="pill round" data-next aria-label="Siguiente">${down}</button></aside>`;
 let h=`<section class="slide hero"><img alt="Estancias del Sur, vista aérea" src="${HERO}"><div class="shade"></div><div class="foot"><div class="cap"><span class="eyebrow">Proyecto</span><h1>Estancias del Sur</h1><div class="acts"><button class="pill round" data-next aria-label="Ver proyecto">${down}</button></div></div></div></section>`;
-S.forEach((s,i)=>{h+=`<section class="slide${s.cls?' '+s.cls+' f0':''}">${imgs(s.id).map((u,k,a)=>`<img${a.length>1?` class="g${k?'':' on'}"`:''} alt="${s.name}${a.length>1?' '+(k+1):''}" data-src="${u}">`).join('')}${imgs(s.id).length>1?`<button class="garr prv glass" data-gp="-1" aria-label="Imagen anterior">‹</button><button class="garr nxt glass" data-gp="1" aria-label="Imagen siguiente">›</button>`:''}<div class="shade"></div><div class="foot"><div class="cap"><span class="idx">${String(i+2).padStart(2,'0')} / ${TOT}</span>${s.cls==='proj'?`<div class="ttl"><h2>${s.name}</h2><button class="pill dn" role="switch" aria-checked="false" aria-label="Ver de noche"><span class="tr"></span><span class="dl">Día</span></button></div>`:`<h2>${s.name}</h2>`}${imgs(s.id).length>1?`<div class="dots">${imgs(s.id).map((_,k)=>`<button data-gi="${k}" aria-label="Ver imagen ${k+1}"${k?'':' class="on"'}></button>`).join('')}</div>`:''}</div>${card(s)}</div></section>`});
+S.forEach((s,i)=>{h+=`<section class="slide${s.cls?' '+s.cls+' f0':''}">${imgs(s.id).map((u,k,a)=>`<img${a.length>1?` class="g${k?'':' on'}"`:''} alt="${s.name}${a.length>1?' '+(k+1):''}" data-src="${u}">`).join('')}${imgs(s.id).length>1?`<button class="garr prv glass" data-gp="-1" aria-label="Imagen anterior">‹</button><button class="garr nxt glass" data-gp="1" aria-label="Imagen siguiente">›</button>`:''}<div class="shade"></div><div class="foot"><div class="cap"><span class="idx">${String(i+2).padStart(2,'0')} / ${TOT}</span>${s.cls==='proj'?`<div class="ttl"><h2>${s.name}</h2><div class="sws"><button class="pill dn" role="switch" data-k="night" aria-checked="false" aria-label="Noche"><span class="la">Día</span><span class="tr"></span><span class="lb">Noche</span></button><button class="pill dn" role="switch" data-k="dark" aria-checked="false" aria-label="Edificio oscuro"><span class="la">Claro</span><span class="tr"></span><span class="lb">Oscuro</span></button></div></div>`:`<h2>${s.name}</h2>`}${imgs(s.id).length>1?`<div class="dots">${imgs(s.id).map((_,k)=>`<button data-gi="${k}" aria-label="Ver imagen ${k+1}"${k?'':' class="on"'}></button>`).join('')}</div>`:''}</div>${card(s)}</div></section>`});
 
 /* sección Referencias */
 h+=`<section class="slide refs"><div class="rscroll" id="rscroll"><div class="rgrid">${REF.map((r,i)=>`<button data-ref="${i}" aria-label="Ver referencia ${i+1}"><img src="${r[0]}" width="${r[1]}" height="${r[2]}" alt="Referencia ${i+1}" loading="lazy" decoding="async"><span>${String(i+1).padStart(2,'0')}</span></button>`).join('')}</div></div><div class="rhead"><div class="cap"><span class="idx">${String(S.length+2).padStart(2,'0')} / ${TOT}</span><h2>Referencias</h2></div></div></section>`;
 /* sección Relevamiento: un slide por espacio, con slider interno */
 REL.forEach(([name,ph],k)=>{h+=`<section class="slide rel" data-rel="${k}"><div class="rstage"></div><button class="garr prv glass" data-gp="-1" aria-label="Foto anterior">‹</button><button class="garr nxt glass" data-gp="1" aria-label="Foto siguiente">›</button><div class="shade"></div><div class="foot"><div class="cap"><span class="idx">${String(R0+k+1).padStart(2,'0')} / ${TOT}</span> <span class="eyebrow">Relevamiento</span><h2>${name}</h2><div class="dots"></div><span class="rcount"></span></div></div></section>`});
 $('#main').innerHTML=h;
-{const pj=$('.slide.proj');if(pj){const ni=document.createElement('img');ni.className='night';ni.alt='Proyecto de noche';ni.dataset.src=NIGHT;pj.insertBefore(ni,$('.garr',pj)||$('.shade',pj))}}
+{}
 if(VID){const v=document.createElement('video');v.src=VID;v.muted=true;v.loop=true;v.playsInline=true;v.preload='auto';v.setAttribute('playsinline','');v.setAttribute('aria-hidden','true');const hi=$('.hero>img');hi.replaceWith(v)}
 
 /* nested dropdown menu: each category unfolds its own items without closing "Espacios" */
@@ -393,8 +405,15 @@ document.addEventListener('keydown',e=>{
  if(['ArrowUp','ArrowLeft','PageUp'].includes(e.key)){if(!projStep(-1))show(idx-1)}});
 
 
+let pjPre=false;
+function pjPreload(){if(pjPre)return;pjPre=true;PV.forEach(v=>Object.values(v).forEach(u=>{const i=new Image();i.src=u}))}
 document.addEventListener('click',e=>{const t=e.target.closest('.dn');if(!t)return;const on=t.getAttribute('aria-checked')!=='true',sl=t.closest('.slide');
- t.setAttribute('aria-checked',on);t.setAttribute('aria-label',on?'Ver de día':'Ver de noche');$('.dl',t).textContent=on?'Noche':'Día';sl.classList.toggle('isnight',on)});
+ t.setAttribute('aria-checked',on);PST[t.dataset.k]=on;pjPreload();
+ const k=(PST.night?'n':'d')+(PST.dark?'g':''),key=k==='dg'?'g':k;
+ $$('img.g',sl).forEach((im,j)=>{const u=PV[j][key];if(im.dataset.src){im.dataset.src=u;return}
+  if(im.classList.contains('on')){const c=im.cloneNode();c.className='xf';c.removeAttribute('alt');c.setAttribute('aria-hidden','true');im.after(c);im.src=u;
+   const go=()=>{requestAnimationFrame(()=>{c.style.opacity='0'});setTimeout(()=>c.remove(),1300)};im.decode?im.decode().then(go,go):go()}
+  else im.src=u})});
 /* galería interna de cada espacio (si tiene más de una imagen) */
 function gal(slide,n){const g=$$('.g',slide);if(g.length<2)return;let c=g.findIndex(i=>i.classList.contains('on'));n=(n+g.length)%g.length;
  if(slide.classList.contains('proj'))slide.classList.toggle('f0',n===0);
