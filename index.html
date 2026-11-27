@@ -246,6 +246,12 @@ html.ready .hero>video{transform:none}
 .dn[aria-checked=false] .lb,.dn[aria-checked=true] .la{opacity:.45}
 .dn .dl{display:none}
 @media (max-width:560px){.dn{font-size:.9rem;padding:.45rem .9rem;gap:.55rem}.dn .tr{width:2.7rem;height:1.55rem}.dn .tr::after{width:1.15rem!important;height:1.15rem!important}.dn[aria-checked=true] .tr::after{transform:translateX(1.15rem)}}
+#pres .panel{width:min(52rem,100%)}
+.prescov{display:block;border-radius:1rem;overflow:hidden;margin:.4rem 0 1.1rem;aspect-ratio:16/9;background:#111;border:1px solid rgba(255,255,255,.1)}
+.prescov img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .6s ease}
+.prescov:hover img{transform:scale(1.02)}
+.pbtns{display:flex;gap:.6rem;flex-wrap:wrap}
+#pres .pdl{gap:1rem;flex-wrap:wrap}
 </style>
 </head>
 <body>
@@ -262,6 +268,11 @@ html.ready .hero>video{transform:none}
    <div class="menu" id="relmenu" role="menu"></div>
   </div>
   <button data-open="plan">Planimetría</button>
+  <div class="dd" id="pzdd">
+   <button id="pzbtn" aria-haspopup="true" aria-expanded="false">Piezas</button>
+   <div class="menu" id="pzmenu" role="menu"><div class="mitem"><button class="mhead" data-open="pz_planta">Planta<span class="arrow">1</span></button></div><div class="mitem"><button class="mhead" data-open="pz_cortes">Cortes<span class="arrow">2</span></button></div><div class="mitem"><button class="mhead" data-open="pz_vistas">Vistas<span class="arrow">2</span></button></div></div>
+  </div>
+  <button data-open="pres">Presentación</button>
  </nav>
  <span style="width:1px"></span>
 </header>
@@ -275,15 +286,21 @@ html.ready .hero>video{transform:none}
  <div class="pdl"><span class="pcap" id="pcap"></span><a class="pill" id="pdlbtn" aria-disabled="true" download>Descargar PDF</a></div>
 </div></div>
 
+<div class="modal" id="pres" role="dialog" aria-modal="true" aria-labelledby="pres-t"><div class="panel glass">
+ <div class="ph"><div><small>Estancias del Sur</small><h2 id="pres-t">Presentación</h2></div><button class="x" data-close aria-label="Cerrar">×</button></div>
+ <a class="prescov" href="assets/presentacion.pdf" target="_blank" rel="noopener"><img src="assets/presentacion.webp" alt="Portada de la presentación Hacienda" loading="lazy"></a>
+ <div class="pdl"><span class="pcap">Hacienda · 12 láminas · PDF 4,8 MB</span><span class="pbtns"><a class="pill" href="assets/presentacion.pdf" target="_blank" rel="noopener">Ver</a><a class="pill" href="assets/presentacion.pdf" download="Hacienda_Presentacion.pdf">Descargar PDF</a></span></div>
+</div></div>
+
 <div class="modal" id="lb" role="dialog" aria-modal="true" aria-label="Referencias"><button class="x" data-close aria-label="Cerrar">×</button><button class="garr prv glass" id="lbp" aria-label="Anterior">‹</button><img class="lbimg" id="lbimg" alt=""><button class="garr nxt glass" id="lbn" aria-label="Siguiente">›</button><div class="lbc" id="lbc"></div></div>
 
 <script>
 const HERO='assets/proyecto_001.webp';
 const IMG={ext0:['assets/22a4c7a41486.webp'],ext1:['assets/bed2bf00f21e.webp'],ext2:['assets/e33506bea2f5.webp'],int0:['assets/567365005ab5.webp'],int1:['assets/75e759f8545b.webp'],int2:['assets/ea58e86a6518.webp'],int3:['assets/b666bfeafcf6.webp'],int4:['assets/96f6a264483c.webp']};
 Object.assign(IMG,{"e2_0":"assets/5eb05a485062.webp","e2_1":"assets/a41950dd031f.webp","e2_2":"assets/be62af8318e6.webp","e2_3":"assets/c57f47ef2496.webp"});
-const PLANS={pl3:'assets/planta_3.pdf',pl1:'assets/planta_1.pdf',pl2:'assets/planta_2.pdf',baja:'assets/d32f8fd8db66.pdf',alta:'assets/c92333d64c6d.pdf'};
+const PLANS={pzp:'assets/pzp.pdf',pzca:'assets/pzca.pdf',pzcb:'assets/pzcb.pdf',pzve:'assets/pzve.pdf',pzvs:'assets/pzvs.pdf',pl3:'assets/planta_3.pdf',pl1:'assets/planta_1.pdf',pl2:'assets/planta_2.pdf',baja:'assets/d32f8fd8db66.pdf',alta:'assets/c92333d64c6d.pdf'};
 /* visor: lo que se muestra en pantalla (PLANS = lo que se descarga) */
-const IMGS={pl3:'assets/planta_3.webp',pl1:'assets/planta_1.webp',pl2:'assets/planta_2.webp',baja:'assets/c3f83383d5d9.webp',alta:'assets/eed8a3ae7f87.webp'};
+const IMGS={pzp:'assets/pzp.webp',pzca:'assets/pzca.webp',pzcb:'assets/pzcb.webp',pzve:'assets/pzve.webp',pzvs:'assets/pzvs.webp',pl3:'assets/planta_3.webp',pl1:'assets/planta_1.webp',pl2:'assets/planta_2.webp',baja:'assets/c3f83383d5d9.webp',alta:'assets/eed8a3ae7f87.webp'};
 const VIEWS={};
 const REF=[["assets/ead019f8581d.jpg",1400,1051],["assets/720c04f7251a.jpg",564,546],["assets/4d1616f1d1af.jpg",1080,1080],["assets/41a6be72ff25.jpg",768,1024],["assets/9e461c80ac8b.jpg",800,1066],["assets/66d40efc14c7.jpg",1148,1400],["assets/291afcb016a9.jpg",736,1313],["assets/b69b73f9d828.jpg",640,960],["assets/dec5f2a06466.jpg",896,1344],["assets/bee74e16aab3.jpg",736,981],["assets/fa081cf1986d.jpg",736,982],["assets/54aeb73a6a64.jpg",1200,800],["assets/39e5410b62de.jpg",933,1400],["assets/f2c19552592c.jpg",1199,848],["assets/db88ec7d38b6.jpg",720,960],["assets/cc9db190561e.jpg",736,981],["assets/2a1124d0366a.jpg",735,704]];
 const MINI='';
@@ -393,10 +410,10 @@ addEventListener('touchend',e=>{if(ty===null||$('.modal.open'))return;const d=ty
 $$('.modal').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)closeM()}));
 let last=null;
 let PMODE=null;
-const PM={plan:{t:'Planimetría',tabs:[['baja','Planta Baja'],['alta','Planimetría']],land:false},plantas:{t:'Plantas',tabs:[['pl1','Planta 1'],['pl2','Planta 2'],['pl3','Planta 3']],land:true}};
-const PLBL={baja:'Planta Baja',alta:'Planimetría',pl1:'Planta 1',pl2:'Planta 2',pl3:'Planta 3'},PDLN={baja:'Planimetria_planta_baja.pdf',alta:'Planimetria_techos.pdf',pl1:'Estancias_del_Sur_Planta_1.pdf',pl2:'Estancias_del_Sur_Planta_2.pdf',pl3:'Estancias_del_Sur_Planta_3.pdf'};
-function setMode(m){PMODE=m;const c=PM[m];$('#plan-t').textContent=c.t;$('.ptabs').innerHTML=c.tabs.map(([k,l],i)=>`<button class="tab${i?'':' on'}" data-plan="${k}">${l}</button>`).join('');$('#pframe').classList.toggle('land',c.land);setPlan(c.tabs[0][0])}
-function openM(id,from){closeM(true);if(id==='plan'||id==='plantas'){if(PMODE!==id||!$('#pimg'))setMode(id);id='plan'}const m=$('#'+id);m.classList.add('open');last=from;setTimeout(()=>$('.x',m).focus(),50)}
+const PM={plan:{t:'Planimetría',tabs:[['baja','Planta Baja'],['alta','Planimetría']],land:false},pz_planta:{t:'Planta',tabs:[['pzp','Planta']],land:true},pz_cortes:{t:'Cortes',tabs:[['pzca','Corte A-A'],['pzcb','Corte B-B']],land:true},pz_vistas:{t:'Vistas',tabs:[['pzve','Vista Este y Oeste'],['pzvs','Vista Sur']],land:true},plantas:{t:'Plantas',tabs:[['pl1','Planta 1'],['pl2','Planta 2'],['pl3','Planta 3']],land:true}};
+const PLBL={pzp:'Planta',pzca:'Corte A-A',pzcb:'Corte B-B',pzve:'Vista Este y Oeste',pzvs:'Vista Sur',baja:'Planta Baja',alta:'Planimetría',pl1:'Planta 1',pl2:'Planta 2',pl3:'Planta 3'},PDLN={pzp:'EDS_Planta.pdf',pzca:'EDS_Corte_A-A.pdf',pzcb:'EDS_Corte_B-B.pdf',pzve:'EDS_Vista_Este_y_Oeste.pdf',pzvs:'EDS_Vista_Sur.pdf',baja:'Planimetria_planta_baja.pdf',alta:'Planimetria_techos.pdf',pl1:'Estancias_del_Sur_Planta_1.pdf',pl2:'Estancias_del_Sur_Planta_2.pdf',pl3:'Estancias_del_Sur_Planta_3.pdf'};
+function setMode(m){PMODE=m;const c=PM[m];$('#plan-t').textContent=c.t;$('.ptabs').innerHTML=c.tabs.map(([k,l],i)=>`<button class="tab${i?'':' on'}" data-plan="${k}">${l}</button>`).join('');$('.ptabs').style.display=c.tabs.length>1?'':'none';$('#pframe').classList.toggle('land',c.land);setPlan(c.tabs[0][0])}
+function openM(id,from){closeM(true);if(PM[id]){if(PMODE!==id||!$('#pimg'))setMode(id);id='plan'}const m=$('#'+id);m.classList.add('open');last=from;setTimeout(()=>$('.x',m).focus(),50)}
 function closeM(q){$$('.modal.open').forEach(m=>m.classList.remove('open'));if(!q&&last)last.focus()}
 document.addEventListener('keydown',e=>{
   if(e.key==='Escape'){closeM();setMenu(false);return}
@@ -414,6 +431,13 @@ document.addEventListener('click',e=>{const t=e.target.closest('.dn');if(!t)retu
   if(im.classList.contains('on')){const c=im.cloneNode();c.className='xf';c.removeAttribute('alt');c.setAttribute('aria-hidden','true');im.after(c);im.src=u;
    const go=()=>{requestAnimationFrame(()=>{c.style.opacity='0'});setTimeout(()=>c.remove(),1300)};im.decode?im.decode().then(go,go):go()}
   else im.src=u})});
+/* menú Piezas */
+const pzmenu=$('#pzmenu'),pzbtn=$('#pzbtn');
+const setPz=o=>{pzmenu.classList.toggle('open',o);pzbtn.setAttribute('aria-expanded',o)};
+pzbtn.addEventListener('click',()=>{const o=!pzmenu.classList.contains('open');setRel(false);setPz(o)});
+relbtn.addEventListener('click',()=>setPz(false));
+document.addEventListener('click',e=>{if(!e.target.closest('#pzdd')||e.target.closest('#pzmenu [data-open]'))setPz(false)});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')setPz(false)});
 /* galería interna de cada espacio (si tiene más de una imagen) */
 function gal(slide,n){const g=$$('.g',slide);if(g.length<2)return;let c=g.findIndex(i=>i.classList.contains('on'));n=(n+g.length)%g.length;
  if(slide.classList.contains('proj'))slide.classList.toggle('f0',n===0);
