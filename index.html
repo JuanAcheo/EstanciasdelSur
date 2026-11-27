@@ -203,7 +203,6 @@ html.ready .hero>video{transform:none}
 .rel .eyebrow{display:block}
 @media (max-width:560px){.logo{display:none}.nav{left:50%;right:auto;transform:translateX(-50%)}.nav button{padding:.5rem .55rem;font-size:.76rem}.nav{flex-wrap:wrap;justify-content:center;width:max-content;max-width:calc(100vw - 1.5rem);border-radius:1.3rem;top:calc(.7rem + env(safe-area-inset-top,0px))}}
 /* Proyecto: vuelo 001 -> 002 */
-.proj>img.g:nth-of-type(1){object-position:63% 31%;transform-origin:63% 31%}
 .proj.dive>img.g:nth-of-type(1){animation:pOut 2.2s cubic-bezier(.6,0,.3,1) both}
 .proj.dive>img.g:nth-of-type(2){animation:pIn 2.2s cubic-bezier(.6,0,.3,1) both}
 .proj.back>img.g:nth-of-type(2){animation:pOut2 2.2s cubic-bezier(.6,0,.3,1) both}
@@ -214,6 +213,29 @@ html.ready .hero>video{transform:none}
 @keyframes pIn2{0%,20%{transform:scale(5.2);filter:blur(14px);opacity:0}65%{opacity:1;filter:blur(2px)}100%{transform:scale(1);filter:blur(0);opacity:1}}
 .proj.dive>img.g,.proj.back>img.g{transition:none;will-change:transform,opacity,filter}
 .proj.dive .cap,.proj.back .cap{transition:opacity .4s}
+/* portada aérea + vuelo hacia Proyecto */
+.slide.hero>img{object-position:63% 31%;transform-origin:63% 31%}
+.slide.dvi,.slide.dbi{animation:none;background:transparent!important}
+.proj.dvi .shade,.hero.dbi .shade{animation:pShade 2.2s ease both}
+@keyframes pShade{0%,45%{opacity:0}100%{opacity:1}}
+.hero.dvo>img{animation:pOut 2.2s cubic-bezier(.6,0,.3,1) both}
+.hero.dvo .foot,.hero.dvo .shade{opacity:0;transition:opacity .5s}
+.proj.dvi>img.on,.proj.isnight.dvi>img.night{animation:pIn 2.2s cubic-bezier(.6,0,.3,1) both}
+.proj.dvi .cap,.proj.dvi .card{animation:rise .9s cubic-bezier(.2,.7,.2,1) 1.4s both}
+.proj.dbo>img.on,.proj.isnight.dbo>img.night{animation:pOut2 2.2s cubic-bezier(.6,0,.3,1) both}
+.proj.dbo .foot{opacity:0;transition:opacity .4s}
+.hero.dbi>img{animation:pIn2 2.2s cubic-bezier(.6,0,.3,1) both}
+/* día / noche */
+.proj>img.night{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1.4s ease}
+.proj.f0.isnight>img.night{opacity:1}
+.proj:not(.f0)>img.night{opacity:0!important;animation:none!important}
+.dn{padding:.45rem 1rem .45rem .5rem;gap:.6rem}
+.dn .tr{position:relative;width:2.5rem;height:1.4rem;border-radius:999px;background:rgba(255,255,255,.22);transition:background .4s;flex:none}
+.dn .tr::after{content:'';position:absolute;top:.17rem;left:.17rem;width:1.06rem;height:1.06rem;border-radius:50%;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.3);transition:transform .45s cubic-bezier(.3,.7,.2,1)}
+.dn[aria-checked=true] .tr{background:#4a5a8c}
+.dn[aria-checked=true] .tr::after{transform:translateX(1.1rem)}
+.dn .dl{min-width:2.9rem;text-align:left}
+.proj:not(.f0) .dn{display:none}
 </style>
 </head>
 <body>
@@ -247,7 +269,7 @@ html.ready .hero>video{transform:none}
 <div class="modal" id="lb" role="dialog" aria-modal="true" aria-label="Referencias"><button class="x" data-close aria-label="Cerrar">×</button><button class="garr prv glass" id="lbp" aria-label="Anterior">‹</button><img class="lbimg" id="lbimg" alt=""><button class="garr nxt glass" id="lbn" aria-label="Siguiente">›</button><div class="lbc" id="lbc"></div></div>
 
 <script>
-const HERO='assets/e4a1d1ee7792.webp';
+const HERO='assets/proyecto_001.webp';
 const IMG={ext0:['assets/22a4c7a41486.webp'],ext1:['assets/bed2bf00f21e.webp'],ext2:['assets/e33506bea2f5.webp'],int0:['assets/567365005ab5.webp'],int1:['assets/75e759f8545b.webp'],int2:['assets/ea58e86a6518.webp'],int3:['assets/b666bfeafcf6.webp'],int4:['assets/96f6a264483c.webp']};
 Object.assign(IMG,{"e2_0":"assets/5eb05a485062.webp","e2_1":"assets/a41950dd031f.webp","e2_2":"assets/be62af8318e6.webp","e2_3":"assets/c57f47ef2496.webp"});
 const PLANS={pl3:'assets/planta_3.pdf',pl1:'assets/planta_1.pdf',pl2:'assets/planta_2.pdf',baja:'assets/d32f8fd8db66.pdf',alta:'assets/c92333d64c6d.pdf'};
@@ -268,20 +290,21 @@ const down='<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="
 /* flatten spaces into slides */
 const imgs=id=>[].concat(IMG[id]||[]);
 const S=[];
-IMG.proj=['assets/proyecto_001.webp','assets/proyecto_002.webp','assets/proyecto_003.webp'];
+IMG.proj=['assets/proyecto_002.webp','assets/proyecto_003.webp'];const NIGHT='assets/proyecto_002_noche.webp';
 S.push({id:'proj',cat:'Proyecto',name:'Proyecto',cls:'proj'});
 /* Espacios 02 */
 const TOT=S.length+2+REL.length,R0=S.length+2;
 
-const card=()=>`<aside class="card glass"><button class="pill" data-open="plan">Planimetría</button><button class="pill round" data-next aria-label="Siguiente">${down}</button></aside>`;
-let h=`<section class="slide hero"><img alt="Estancias del Sur, vista exterior" src="${HERO}"><div class="shade"></div><div class="foot"><div class="cap"><span class="eyebrow">Proyecto</span><h1>Estancias del Sur</h1><div class="acts"><button class="pill round" data-next aria-label="Ver proyecto">${down}</button></div></div></div></section>`;
-S.forEach((s,i)=>{h+=`<section class="slide${s.cls?' '+s.cls:''}">${imgs(s.id).map((u,k,a)=>`<img${a.length>1?` class="g${k?'':' on'}"`:''} alt="${s.name}${a.length>1?' '+(k+1):''}" data-src="${u}">`).join('')}${imgs(s.id).length>1?`<button class="garr prv glass" data-gp="-1" aria-label="Imagen anterior">‹</button><button class="garr nxt glass" data-gp="1" aria-label="Imagen siguiente">›</button>`:''}<div class="shade"></div><div class="foot"><div class="cap"><span class="idx">${String(i+2).padStart(2,'0')} / ${TOT}</span><h2>${s.name}</h2>${imgs(s.id).length>1?`<div class="dots">${imgs(s.id).map((_,k)=>`<button data-gi="${k}" aria-label="Ver imagen ${k+1}"${k?'':' class="on"'}></button>`).join('')}</div>`:''}</div>${card()}</div></section>`});
+const card=s=>`<aside class="card glass">${s&&s.cls==='proj'?`<button class="pill dn" role="switch" aria-checked="false" aria-label="Ver de noche"><span class="tr"></span><span class="dl">Día</span></button>`:''}<button class="pill" data-open="plan">Planimetría</button><button class="pill round" data-next aria-label="Siguiente">${down}</button></aside>`;
+let h=`<section class="slide hero"><img alt="Estancias del Sur, vista aérea" src="${HERO}"><div class="shade"></div><div class="foot"><div class="cap"><span class="eyebrow">Proyecto</span><h1>Estancias del Sur</h1><div class="acts"><button class="pill round" data-next aria-label="Ver proyecto">${down}</button></div></div></div></section>`;
+S.forEach((s,i)=>{h+=`<section class="slide${s.cls?' '+s.cls+' f0':''}">${imgs(s.id).map((u,k,a)=>`<img${a.length>1?` class="g${k?'':' on'}"`:''} alt="${s.name}${a.length>1?' '+(k+1):''}" data-src="${u}">`).join('')}${imgs(s.id).length>1?`<button class="garr prv glass" data-gp="-1" aria-label="Imagen anterior">‹</button><button class="garr nxt glass" data-gp="1" aria-label="Imagen siguiente">›</button>`:''}<div class="shade"></div><div class="foot"><div class="cap"><span class="idx">${String(i+2).padStart(2,'0')} / ${TOT}</span><h2>${s.name}</h2>${imgs(s.id).length>1?`<div class="dots">${imgs(s.id).map((_,k)=>`<button data-gi="${k}" aria-label="Ver imagen ${k+1}"${k?'':' class="on"'}></button>`).join('')}</div>`:''}</div>${card(s)}</div></section>`});
 
 /* sección Referencias */
 h+=`<section class="slide refs"><div class="rscroll" id="rscroll"><div class="rgrid">${REF.map((r,i)=>`<button data-ref="${i}" aria-label="Ver referencia ${i+1}"><img src="${r[0]}" width="${r[1]}" height="${r[2]}" alt="Referencia ${i+1}" loading="lazy" decoding="async"><span>${String(i+1).padStart(2,'0')}</span></button>`).join('')}</div></div><div class="rhead"><div class="cap"><span class="idx">${String(S.length+2).padStart(2,'0')} / ${TOT}</span><h2>Referencias</h2></div></div></section>`;
 /* sección Relevamiento: un slide por espacio, con slider interno */
 REL.forEach(([name,ph],k)=>{h+=`<section class="slide rel" data-rel="${k}"><div class="rstage"></div><button class="garr prv glass" data-gp="-1" aria-label="Foto anterior">‹</button><button class="garr nxt glass" data-gp="1" aria-label="Foto siguiente">›</button><div class="shade"></div><div class="foot"><div class="cap"><span class="idx">${String(R0+k+1).padStart(2,'0')} / ${TOT}</span> <span class="eyebrow">Relevamiento</span><h2>${name}</h2><div class="dots"></div><span class="rcount"></span></div></div></section>`});
 $('#main').innerHTML=h;
+{const pj=$('.slide.proj');if(pj){const ni=document.createElement('img');ni.className='night';ni.alt='Proyecto de noche';ni.dataset.src=NIGHT;pj.insertBefore(ni,$('.garr',pj)||$('.shade',pj))}}
 if(VID){const v=document.createElement('video');v.src=VID;v.muted=true;v.loop=true;v.playsInline=true;v.preload='auto';v.setAttribute('playsinline','');v.setAttribute('aria-hidden','true');const hi=$('.hero>img');hi.replaceWith(v)}
 
 /* nested dropdown menu: each category unfolds its own items without closing "Espacios" */
@@ -294,8 +317,10 @@ let idx=0,busy=false;sec[0].classList.add('cur');
 function update(){document.documentElement.classList.toggle('on-hero',idx===0);{const hv=$('.hero>video');if(hv){if(idx!==0)hv.pause();else if(document.documentElement.classList.contains('ready'))hv.play().catch(()=>{})}}$$('#ticks button').forEach((b,i)=>b.classList.toggle('on',i===idx));
  $$('.menu [data-idx]').forEach(b=>b.classList.toggle('on',idx>=+b.dataset.idx&&idx<=+(b.dataset.end||b.dataset.idx)))}
 function show(n){n=(n+sec.length)%sec.length;if(busy||n===idx)return;busy=true;const p=sec[idx],c=sec[n];
- p.classList.remove('cur','enter');p.classList.add('prev');c.classList.add('cur','enter');idx=n;update();hydN(n);
- setTimeout(()=>{p.classList.remove('prev');c.classList.remove('enter');busy=false},1550)}
+ const fw=idx===0&&n===1&&c.classList.contains('proj')&&c.classList.contains('f0'),bw=idx===1&&n===0&&p.classList.contains('proj')&&p.classList.contains('f0');
+ p.classList.remove('cur','enter');p.classList.add('prev');if(fw)p.classList.add('dvo');if(bw)p.classList.add('dbo');
+ c.classList.add('cur',fw?'dvi':bw?'dbi':'enter');idx=n;update();hydN(n);
+ setTimeout(()=>{p.classList.remove('prev','dvo','dbo');c.classList.remove('enter','dvi','dbi');busy=false},fw||bw?2300:1550)}
 update();
 
 $('#refbtn').dataset.go=S.length+1;
@@ -368,9 +393,11 @@ document.addEventListener('keydown',e=>{
  if(['ArrowUp','ArrowLeft','PageUp'].includes(e.key)){if(!projStep(-1))show(idx-1)}});
 
 
+document.addEventListener('click',e=>{const t=e.target.closest('.dn');if(!t)return;const on=t.getAttribute('aria-checked')!=='true',sl=t.closest('.slide');
+ t.setAttribute('aria-checked',on);t.setAttribute('aria-label',on?'Ver de día':'Ver de noche');$('.dl',t).textContent=on?'Noche':'Día';sl.classList.toggle('isnight',on)});
 /* galería interna de cada espacio (si tiene más de una imagen) */
 function gal(slide,n){const g=$$('.g',slide);if(g.length<2)return;let c=g.findIndex(i=>i.classList.contains('on'));n=(n+g.length)%g.length;
- if(slide.classList.contains('proj')){const f=c===0&&n===1?'dive':c===1&&n===0?'back':'';if(f){if(slide._dv)return;slide._dv=1;slide.classList.add(f);setTimeout(()=>{slide.classList.remove(f);slide._dv=0},2300)}}
+ if(slide.classList.contains('proj'))slide.classList.toggle('f0',n===0);
  g.forEach((i,k)=>i.classList.toggle('on',k===n));$$('.dots button',slide).forEach((b,k)=>b.classList.toggle('on',k===n));if(slide.classList.contains('rel'))relCnt(slide)}
 const galStep=d=>{const sl=sec[idx];const g=$$('.g',sl);if(g.length<2)return;gal(sl,g.findIndex(i=>i.classList.contains('on'))+d)};
 document.addEventListener('click',e=>{const t=e.target.closest('[data-gp],[data-gi]');if(!t)return;const sl=t.closest('.slide');
